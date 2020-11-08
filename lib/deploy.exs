@@ -1,6 +1,25 @@
 repo = Env.ensure("GITHUB_REPOSITORY")
 secrets_name = Env.ensure("INPUT_SECRETS_NAME", "secrets")
-secrets = Env.ensure("INPUT_SECRETS") |> Base.decode64!() |> Jason.decode!()
+
+short_sha = Shell.run("cd #{workspace}; git rev-parse --short HEAD")
+now = Shell.run("date +%F-%T")
+version = "#{now}-#{short_sha}"
+
+secrets =
+  "INPUT_SECRETS"
+  |> Env.ensure()
+  |> Base.decode64!()
+  |> Jason.decode!()
+
+secrets =
+  secrets
+  |> Map.put("DEPLOYMENT_VERSION", version)
+  |> Enum.map(fn {k, v} ->
+    "--from-literal='#{k}=#{v}'"
+  end)
+  |> Enum.join(" ")
+  |> IO.inspect()
+
 docker_registry = "docker.pkg.github.com"
 [repo_owner, _repo_name] = String.split(repo, "/")
 home = "/github/home"
@@ -20,15 +39,13 @@ Shell.run("Create Docker secret for Kubernetes...", [
   "kubectl create secret generic docker --from-file=.dockerconfigjson=#{home}/.docker/config.json --type=kubernetes.io/dockerconfigjson"
 ])
 
-short_sha = Shell.run("cd #{workspace}; git rev-parse --short HEAD")
-now = Shell.run("date +%F-%T")
-version = "#{now}-#{short_sha}"
-
-Shell.run("Update secrets", [
-  "kubectl delete secret #{secrets_name} --ignore-not-found"
+Shell.run("Update secrets...", [
+  "kubectl delete secret #{secrets_name} --ignore-not-found",
+  "kubectl create secret generic #{secrets_name} #{secrets}"
 ])
 
-Shell.run("Set version and deploy", [
-  "sed -i \"s/{{VERSION}}/#{version}/g\" #{workspace}/k8s.yml",
+Shell.run("Deploy...", [
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
+
+IO.put("Success!")

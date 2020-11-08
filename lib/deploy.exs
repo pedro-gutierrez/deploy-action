@@ -21,7 +21,7 @@ short_sha = Shell.run("git rev-parse --short HEAD")
 now = Shell.run("date +%F-%T")
 version = "#{now}-#{short_sha}"
 
-secrets_name = System.get_env("INPUT_SECRETS_NAME")
+secrets_name = System.get_env("INPUT_SECRETS_NAME", "secrets")
 secrets = System.get_env("INPUT_SECRETS") |> Base.decode64!() |> Jason.decode!()
 
 Shell.run("Update secrets", [

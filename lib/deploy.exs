@@ -1,5 +1,8 @@
+repo = Env.ensure("GITHUB_REPOSITORY")
+secrets_name = Env.ensure("INPUT_SECRETS_NAME", "secrets")
+secrets = Env.ensure("INPUT_SECRETS") |> Base.decode64!() |> Jason.decode!()
 docker_registry = "docker.pkg.github.com"
-[repo_owner, _repo_name] = "GITHUB_REPOSITORY" |> System.get_env() |> String.split("/")
+repo_owner, _repo_name] = String.split(repo, "/")
 home = "/github/home"
 workspace = "/github/workspace"
 docker_config_file = "#{home}/.docker/config.json"
@@ -22,8 +25,6 @@ short_sha = Shell.run("cd #{workspace}; git rev-parse --short HEAD")
 now = Shell.run("date +%F-%T")
 version = "#{now}-#{short_sha}"
 
-secrets_name = System.get_env("INPUT_SECRETS_NAME", "secrets")
-secrets = System.get_env("INPUT_SECRETS") |> Base.decode64!() |> Jason.decode!()
 
 Shell.run("Update secrets", [
   "kubectl delete secret #{secrets_name} --ignore-not-found"

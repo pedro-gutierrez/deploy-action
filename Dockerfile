@@ -1,6 +1,8 @@
 FROM pedrogutierrez/elixir:1.11
-WORKDIR /action
+RUN mkdir /action
 COPY lib /action/lib
 COPY mix.exs mix.lock /action/
 RUN mix deps.get; mix compile
-ENTRYPOINT ["mix", "run", "lib/deploy.exs"]
+COPY entrypoint.sh /action/entrypoint.sh
+RUN chmod +x /action/entrypoint.sh 
+ENTRYPOINT ["/action/entrypoint.sh"]

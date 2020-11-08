@@ -1,4 +1,7 @@
 FROM pedrogutierrez/elixir:1.11
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod a+x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+WORKDIR /action
+COPY lib /action/lib
+COPY mix.exs mix.lock /action/
+RUN mix deps.get; mix compile
+RUN ls -la
+ENTRYPOINT ["mix", "run", "lib/deploy.exs"]

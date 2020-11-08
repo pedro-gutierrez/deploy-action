@@ -29,6 +29,6 @@ Shell.run("Update secrets", [
 ])
 
 Shell.run("Set version and deploy", [
-    "sed -i "s/{{VERSION}}/#{version}/g" k8s.yml",
-    "kubectl apply -f k8s.yml"
+  "sed -i \"s/{{VERSION}}/#{version}/g\" k8s.yml",
+  "kubectl apply -f k8s.yml"
 ])

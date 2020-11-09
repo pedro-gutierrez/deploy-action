@@ -12,8 +12,12 @@ defmodule Shell do
       System.halt(status)
     end
 
+    output = String.trim(output)
+
+    if String.length(output) > 0 do
+      IO.puts(output)
+    end
+
     output
-    |> String.trim()
-    |> IO.inspect()
   end
 end

@@ -14,10 +14,6 @@ secrets =
   |> Env.ensure()
   |> Base.decode64!()
   |> Jason.decode!()
-
-secrets =
-  secrets
-  |> Map.put("DEPLOYMENT_VERSION", version)
   |> Enum.map(fn {k, v} ->
     "--from-literal='#{k}=#{v}'"
   end)
@@ -45,6 +41,7 @@ Shell.run("Update secrets...", [
 ])
 
 Shell.run("Deploy...", [
+  "sed -i \"s/{{VERSION}}/#{version}/g\" #{workspace}/k8s.yml",
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
 

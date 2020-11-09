@@ -1,3 +1,7 @@
+workspace = "/github/workspace"
+home = "/github/home"
+docker_registry = "docker.pkg.github.com"
+
 repo = Env.ensure("GITHUB_REPOSITORY")
 secrets_name = Env.ensure("INPUT_SECRETS_NAME", "secrets")
 
@@ -20,10 +24,7 @@ secrets =
   |> Enum.join(" ")
   |> IO.inspect()
 
-docker_registry = "docker.pkg.github.com"
 [repo_owner, _repo_name] = String.split(repo, "/")
-home = "/github/home"
-workspace = "/github/workspace"
 
 Shell.run("Setup Docker...", [
   "echo $INPUT_DOCKER_PASSWORD | docker login #{docker_registry} -u #{repo_owner} --password-stdin"

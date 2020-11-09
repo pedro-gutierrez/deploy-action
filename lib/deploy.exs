@@ -3,7 +3,7 @@ home = "/github/home"
 docker_registry = "docker.pkg.github.com"
 
 repo = Env.ensure("GITHUB_REPOSITORY")
-[repo_owner, _repo_name] = String.split(repo, "/")
+[repo_owner, repo_name] = String.split(repo, "/")
 
 docker_tag = Env.ensure("INPUT_DOCKER_TAG", "latest")
 image_tag = "#{docker_registry}/#{repo_owner}/#{repo_name}/#{repo_name}:#{docker_tag}"

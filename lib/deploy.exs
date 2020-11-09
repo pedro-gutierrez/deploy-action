@@ -3,6 +3,11 @@ home = "/github/home"
 docker_registry = "docker.pkg.github.com"
 
 repo = Env.ensure("GITHUB_REPOSITORY")
+[repo_owner, _repo_name] = String.split(repo, "/")
+
+docker_tag = Env.ensure("INPUT_DOCKER_TAG", "latest")
+image_tag = "#{docker_registry}/#{repo_owner}/#{repo_name}/#{repo_name}:#{docker_tag}"
+
 secrets_name = Env.ensure("INPUT_SECRETS_NAME", "secrets")
 
 short_sha = Shell.run("cd #{workspace}; git rev-parse --short HEAD")
@@ -19,10 +24,10 @@ secrets =
   end)
   |> Enum.join(" ")
 
-[repo_owner, _repo_name] = String.split(repo, "/")
-
-Shell.run("Setup Docker...", [
-  "echo $INPUT_DOCKER_PASSWORD | docker login #{docker_registry} -u #{repo_owner} --password-stdin"
+Shell.run("Build and push Docker image...", [
+  "echo $INPUT_DOCKER_PASSWORD | docker login #{docker_registry} -u #{repo_owner} --password-stdin",
+  "cd #{workspace}; docker build -t #{image_tag} .",
+  "docker push #{image_tag}"
 ])
 
 Shell.run("Setup Kubernetes...", [

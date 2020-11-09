@@ -12,6 +12,8 @@ defmodule Shell do
       System.halt(status)
     end
 
-    String.trim(output)
+    output
+    |> String.trim()
+    |> IO.inspect()
   end
 end

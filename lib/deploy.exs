@@ -22,7 +22,6 @@ secrets =
     "--from-literal='#{k}=#{v}'"
   end)
   |> Enum.join(" ")
-  |> IO.inspect()
 
 [repo_owner, _repo_name] = String.split(repo, "/")
 
@@ -49,4 +48,4 @@ Shell.run("Deploy...", [
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
 
-IO.put("Success!")
+IO.puts("Success!")

@@ -50,4 +50,12 @@ Shell.run("Deploy...", [
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
 
+pods_to_kill = Env.ensure("KILL_PODS", "none")
+
+if pods_to_kill != "none" do
+  Shell.run("Deleting pods with label #{pods_to_kill}", [
+    "kubectl delete pods -l #{pods_to_kill}"
+  ])
+end
+
 IO.puts("Success!")

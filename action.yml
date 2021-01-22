@@ -1,12 +1,12 @@
-name: 'deploy-action'
-description: 'Deploy to Kubernetes'
-author: 'Pedro Gutiérrez'
+name: "deploy-action"
+description: "Deploy to Kubernetes"
+author: "Pedro Gutiérrez"
 branding:
-  icon: 'cloud'
-  color: 'blue'
+  icon: "cloud"
+  color: "blue"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
 inputs:
   docker_tag:
     description: "The docker tag to publish"
@@ -18,3 +18,5 @@ inputs:
     description: "A name for the Kubernetes secrets to create"
   secrets:
     description: "Base64 encoded json with secrets"
+  kill:
+    description: "A selector for pods to be killed"

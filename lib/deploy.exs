@@ -50,11 +50,14 @@ Shell.run("Deploy...", [
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
 
-pods_to_kill = Env.ensure("KILL_PODS", "none")
+scale = Env.ensure("SCALE", :undefined)
 
-if pods_to_kill != "none" do
-  Shell.run("Deleting pods with label #{pods_to_kill}", [
-    "kubectl delete pods -l #{pods_to_kill}"
+if scale != :undefined do
+  [kind, name, replicas] = String.split(scale, ":")
+
+  Shell.run("Restarting pods for #{kind} #{name}...", [
+    "kubectl scale statefulset #{name} --replicas=0",
+    "kubectl scale statefulset #{name} --replicas=#{replicas}"
   ])
 end
 

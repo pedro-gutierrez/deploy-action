@@ -18,5 +18,5 @@ inputs:
     description: "A name for the Kubernetes secrets to create"
   secrets:
     description: "Base64 encoded json with secrets"
-  kill:
-    description: "A selector for pods to be killed"
+  scale:
+    description: "Scale a replica controller"

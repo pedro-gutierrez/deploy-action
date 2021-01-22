@@ -50,9 +50,9 @@ Shell.run("Deploy...", [
   "kubectl apply -f #{workspace}/k8s.yml"
 ])
 
-scale = Env.ensure("SCALE", :undefined)
+scale = Env.ensure("INPUT_SCALE", "skip")
 
-if scale != :undefined do
+if scale != "skip" do
   [kind, name, replicas] = String.split(scale, ":")
 
   Shell.run("Restarting pods for #{kind} #{name}...", [

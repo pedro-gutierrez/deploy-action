@@ -55,8 +55,13 @@ scale = Env.ensure("INPUT_SCALE", "skip")
 if scale != "skip" do
   [kind, name, replicas] = String.split(scale, ":")
 
-  Shell.run("Restarting pods for #{kind} #{name}...", [
-    "kubectl scale statefulset #{name} --replicas=0",
+  Shell.run("Downscaling #{kind} #{name} to 0 replicas...", [
+    "kubectl scale statefulset #{name} --replicas=0"
+  ])
+
+  Process.sleep(5000)
+
+  Shell.run("Scaling up #{kind} #{name} to #{replicas} replicas...", [
     "kubectl scale statefulset #{name} --replicas=#{replicas}"
   ])
 end
